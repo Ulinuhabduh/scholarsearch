@@ -63,6 +63,7 @@ def search_scholar(query, limit, year_start, year_end):
 st.set_page_config(page_title="Scholar Search", page_icon="📚", layout="wide")
 
 st.title("🔍 Scholar Search: Your Gateway to Academic Knowledge")
+st.markdown("*Author* : ***M Ulin Nuha Abduh***")
 
 st.markdown("""
     <style>
