@@ -15,16 +15,22 @@ def format_citation_apa(citation):
     formatted_authors = []
     for author in authors:
         names = author.split()
-        formatted_author = f"{names[-1]}, {' '.join(names[:-1])}"
+        formatted_author = f"{names[-1]}, {' '.join(names[:-1])}."
         formatted_authors.append(formatted_author)
-
+    
     if len(formatted_authors) > 1:
-        author_str = ", ".join(formatted_authors[:-1]) + ", & " + formatted_authors[-1]
+        if len(formatted_authors) == 2:
+            author_str = " & ".join(formatted_authors)
+        else:
+            author_str = ", ".join(formatted_authors[:-1]) + ", & " + formatted_authors[-1]
     else:
         author_str = formatted_authors[0]
-
-    citation_str = f"{author_str} ({year}). {title}. {journal}"
+    
+    # Format citation
+    citation_str = f"{author_str} ({year}). {title}. {journal}."
     return citation_str
+
+
 
 def search_scholar(query, limit, year_start, year_end):
     search_query = scholarly.search_pubs(query)
@@ -152,7 +158,9 @@ if st.session_state.search_results is not None:
             with cols[1]:
                 if result['url'] != 'No URL available':
                     st.markdown(f"[Preview Journal]({result['url']})")
-            st.text_area("Citation", value=result['citation'], height=100)
+            st.info(f'''**Citation :**\n
+                    {result['citation']}
+                    ''')
             st.write("---")
     else:
         st.write("No results found.")
