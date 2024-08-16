@@ -66,11 +66,17 @@ def search_scholar(query, limit, year_start, year_end):
             break
     return results
 
+
+# Set the page configuration for the app
 st.set_page_config(page_title="Scholar Search", page_icon="📚", layout="wide")
 
+# Display the title of the app
 st.title("🔍 Scholar Search: Your Gateway to Academic Knowledge")
+
+# Display the author's name
 st.markdown("*Author* : ***M Ulin Nuha Abduh***")
 
+# Add custom CSS style to increase the font size
 st.markdown("""
     <style>
     .big-font {
@@ -80,26 +86,34 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+# Display a big-font message using HTML tags
 st.markdown('<p class="big-font">Discover. Learn. Cite.</p>', unsafe_allow_html=True)
 
+# Display a welcome message
 st.write("Welcome to Scholar Search, your one-stop solution for academic research.")
 
+# Create three columns for the layout
 col1, col2, col3 = st.columns(3)
 
+# Display content in the first column
 with col1:
     st.subheader("🚀 Quick Search")
     st.write("Find relevant academic papers in seconds.")
 
+# Display content in the second column
 with col2:
     st.subheader("📊 Comprehensive Results")
     st.write("Get detailed information including abstracts and citations.")
 
+# Display content in the third column
 with col3:
     st.subheader("🗓️ Time-Saving")
     st.write("Filter by year to focus on recent or historical research.")
 
+# Add a horizontal line
 st.markdown("---")
 
+# Display instructions on how to use the app
 st.write("""
     ### How to use:
     1. Enter your search keywords in the sidebar
@@ -108,59 +122,99 @@ st.write("""
     4. Explore the results, read abstracts, and access full papers
 """)
 
+# Display an image in the sidebar
 st.sidebar.image("https://img.icons8.com/?size=100&id=qtErPBbpMdwO&format=png&color=000000")
+
+# Add a horizontal line
 st.write("---")
 
 # Sidebar input
 st.sidebar.title("Search Parameters")
+
+# Get the search query from the user
 query = st.sidebar.text_input("Enter keywords to search in title and abstract:")
+
+# Get the number of results to display from the user
 limit = st.sidebar.number_input("Enter the number of results to display:", min_value=1, max_value=100, value=10)
 
+# Display a message about the result limit
 st.sidebar.write("Limit 100 results")
+
+# Get the start year from the user
 year_start = st.sidebar.number_input("Start Year", min_value=1900, max_value=2100, value=2000)
+
+# Get the end year from the user
 year_end = st.sidebar.number_input("End Year", min_value=1900, max_value=2100, value=2024)
 
-# Tambahkan tombol pencarian
+# Add a search button
 search_button = st.sidebar.button("Search")
 
-# Inisialisasi session state untuk menyimpan hasil pencarian
+# Initialize the session state to store search results
 if 'search_results' not in st.session_state:
     st.session_state.search_results = None
 
-# Lakukan pencarian ketika tombol ditekan
+
+
+# Check if the search button is clicked
 if search_button:
+    # Check if the query is not empty
     if query:
+        # Show a spinner with the message "Searching..."
         with st.spinner('Searching...'):
+            # Call the search_scholar function to search for scholarly articles
+            # Pass the query, limit, year_start, and year_end as parameters
+            # Store the search results in the session state variable "search_results"
             st.session_state.search_results = search_scholar(query, limit, year_start, year_end)
     else:
+        # Show a warning message if the query is empty
         st.warning("Please enter search keywords.")
 
-# Tampilkan hasil pencarian
+# Check if there are search results in the session state variable "search_results"
 if st.session_state.search_results is not None:
+    # Display the search query
     st.write(f"Search Results for: {query}")
+    # Get the search results from the session state variable
     results = st.session_state.search_results
+    # Check if there are results
     if results:
+        # Iterate over the results
         for idx, result in enumerate(results):
+            # Display the title of the result
             st.success(f"### {idx + 1}. {result['title']}")
+            # Display the authors of the result
             st.write(f"**Authors:** {result['author']}")
             
-            # Highlight keywords in abstract
+            # Highlight keywords in the abstract
             abstract = result['abstract']
+            # Split the query into individual words
             for word in query.split():
+                # Use regular expressions to find and replace the words in the abstract with bolded versions
                 abstract = re.sub(f'(?i){re.escape(word)}', lambda m: f"**{m.group()}**", abstract)
             
+            # Display the abstract with highlighted keywords
             st.write(f"**Abstract:** ... {abstract} ...")
             
+            # Create two columns for displaying the journal access and preview links
             cols = st.columns([1, 1])
             with cols[0]:
+                # Check if the result has a journal access link
                 if result['link'] != 'No URL available':
+                    # Display a markdown link to access the journal
                     st.markdown(f"[Access Journal]({result['link']})")
             with cols[1]:
+                # Check if the result has a journal preview link
                 if result['url'] != 'No URL available':
+                    # Display a markdown link to preview the journal
                     st.markdown(f"[Preview Journal]({result['url']})")
+            
+            # Display the citation of the result
             st.info(f'''**Citation :**\n
                     {result['citation']}
                     ''')
+            
+            # Add a horizontal line to separate the results
             st.write("---")
     else:
+        # Display a message if no results are found
         st.write("No results found.")
+
